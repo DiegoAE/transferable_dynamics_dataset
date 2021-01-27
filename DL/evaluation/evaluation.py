@@ -249,6 +249,13 @@ def run(parser):
         dynamics_learner = SystemId(history_length=arguments.history_length,
                                     prediction_horizon=arguments.prediction_horizon,
                                     settings=settings)
+    elif arguments.method == 'falkon':
+        from DL.methods.falkon import FalkonDynLearner
+        dynamics_learner = FalkonDynLearner(history_length, prediction_horizon,
+                                          difference_learning=True,
+                                          averaging=arguments.averaging,
+                                          streaming=arguments.streaming,
+                                          settings=settings)
     assert dynamics_learner, "Make sure the method is implemented."
     training_observations, training_actions = loadRobotData(
         arguments.training_data)

@@ -13,7 +13,6 @@ from DL import DynamicsLearnerInterface
 from DL.utils import loadRobotData
 
 
-
 class FalkonDynLearner(DynamicsLearnerInterface):
 
     def __init__(self, history_length, prediction_horizon, difference_learning,
@@ -22,9 +21,11 @@ class FalkonDynLearner(DynamicsLearnerInterface):
                 difference_learning, averaging=averaging, streaming=streaming)
         self.models_ = []
         opt = FalkonOptions(use_cpu=True, keops_active="no", debug=False)
+
+        # TODO: The penalty, sigma and M are hardcoded for now.
         for i in range(self.observation_dimension):
             kernel = kernels.GaussianKernel(sigma=5)
-            flk = Falkon(kernel=kernel, penalty=1e-4, M=50, options=opt)
+            flk = Falkon(kernel=kernel, penalty=1e-4, M=1000, options=opt)
             self.models_.append(flk)
 
     def _learn(self, training_inputs, training_targets):
