@@ -14,7 +14,7 @@ from DL.utils import loadRobotData
 
 
 
-class FalkonKernelMachine(DynamicsLearnerInterface):
+class FalkonDynLearner(DynamicsLearnerInterface):
 
     def __init__(self, history_length, prediction_horizon, difference_learning,
             averaging, streaming, settings=None):
@@ -52,11 +52,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data_filename", required=True,
             help="<Required> filename of the input robot data")
+    parser.add_argument("--horizon", type=int, default=1,
+            help="Prediction horizon")
+    parser.add_argument("--history", type=int, default=1,
+            help="History length")
     args = parser.parse_args()
     observations, actions = loadRobotData(args.data_filename)
 
     # Learning in batch mode.
-    dynamics_model = FalkonKernelMachine(1, 1, True, False, False)
+    dynamics_model = FalkonDynLearner(args.history, args.horizon, True, False,
+            False)
     dynamics_model.learn(observations, actions)
     print(dynamics_model.name())
 
