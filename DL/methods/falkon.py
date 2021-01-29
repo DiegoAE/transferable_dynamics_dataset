@@ -20,12 +20,12 @@ class FalkonDynLearner(DynamicsLearnerInterface):
         super().__init__(history_length, prediction_horizon,
                 difference_learning, averaging=averaging, streaming=streaming)
         self.models_ = []
-        opt = FalkonOptions(use_cpu=True, keops_active="no", debug=False)
+        # opt = FalkonOptions(use_cpu=True, keops_active="no", debug=False)
 
         # TODO: The penalty, sigma and M are hardcoded for now.
         for i in range(self.observation_dimension):
             kernel = kernels.GaussianKernel(sigma=5)
-            flk = Falkon(kernel=kernel, penalty=1e-4, M=1000, options=opt)
+            flk = Falkon(kernel=kernel, penalty=1e-4, M=1000)
             self.models_.append(flk)
 
     def _learn(self, training_inputs, training_targets):
@@ -42,7 +42,8 @@ class FalkonDynLearner(DynamicsLearnerInterface):
         inputs_torch = torch.from_numpy(inputs)
         prediction = np.zeros((inputs.shape[0], self.observation_dimension))
         for i, model in enumerate(self.models_):
-            prediction[:, i] = model.predict(inputs_torch)
+            pred = model.predict(inputs_torch)
+            prediction[:, i] = pred.flatten()
         return prediction
 
     def name(self):
