@@ -293,7 +293,7 @@ if __name__ == '__main__':
 
     # The name of the baseline that predicts no change is 'delta 0'.
     method_names = ['linear', 'avg-linear', 'NN', 'avg-NN',
-                    'avg-EQL', 'svgpr', 'avg-svgpr', 'avg-falkon',
+                    'avg-EQL', 'svgpr', 'avg-svgpr', 'falkon', 'avg-falkon',
                     'system_id_ls', 'system_id_cad']
 
     path_to_plots = '/tmp'

@@ -19,13 +19,23 @@ class FalkonDynLearner(DynamicsLearnerInterface):
             averaging, streaming, settings=None):
         super().__init__(history_length, prediction_horizon,
                 difference_learning, averaging=averaging, streaming=streaming)
-        self.models_ = []
-        # opt = FalkonOptions(use_cpu=True, keops_active="no", debug=False)
 
-        # TODO: The penalty, sigma and M are hardcoded for now.
+        # Defaults
+        sigmas = [1.] * self.observation_dimension
+        M = 1000
+        penalties = [1e-4] * self.observation_dimension
+        if settings:
+            sigmas = settings['sigmas']
+            penalties = settings['penalties']
+        print('Sigmas', sigmas)
+        print('Penalties', penalties)
+
+        opt = FalkonOptions(use_cpu=True, keops_active="no", debug=False)
+
+        self.models_ = []
         for i in range(self.observation_dimension):
-            kernel = kernels.GaussianKernel(sigma=5)
-            flk = Falkon(kernel=kernel, penalty=1e-4, M=1000)
+            kernel = kernels.GaussianKernel(sigma=sigmas[i])
+            flk = Falkon(kernel=kernel, penalty=penalties[i], M=M, options=opt)
             self.models_.append(flk)
 
     def _learn(self, training_inputs, training_targets):
